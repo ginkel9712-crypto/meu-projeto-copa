@@ -1,6 +1,7 @@
 const https = require('https');
 
 exports.handler = async (event, context) => {
+  // Configuração nativa de CORS para evitar travamentos no navegador
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -21,7 +22,11 @@ exports.handler = async (event, context) => {
     const { match } = JSON.parse(event.body);
 
     if (!match) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Partida não informada.' }) };
+      return { 
+        statusCode: 400, 
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: 'Partida não informada.' }) 
+      };
     }
 
     const isPost = match.result !== null;
@@ -31,47 +36,20 @@ exports.handler = async (event, context) => {
       return { 
         statusCode: 500, 
         headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ error: 'A chave GEMINI_API_KEY não foi configurada no painel do Netlify.' }) 
+        body: JSON.stringify({ error: 'A variável GEMINI_API_KEY não foi encontrada no ambiente do Netlify.' }) 
       };
     }
     
-    const systemPrompt = `Você é um Analista de Apostas Esportivas Sênior e Cientista de Dados de Futebol com mais de 15 anos de experiência e taxa de acerto auditada superior a 90% no mercado asiático.
-    Seu foco é puramente matemático, tático e frio. Você desconsidera favoritismos históricos vazios e foca em:
-    1. Projeção de xG (Expected Goals) baseado no estilo de jogo.
-    2. Encaixe Tático.
-    3. Fatores de Desgaste Logístico na Copa de 2026.
-    4. Linhas de Valor Justo (Value Bets).`;
+    const systemPrompt = `Você é um Analista de Apostas Esportivas Sênior e Cientista de Dados de Futebol com mais de 15 anos de experiência no mercado asiático. Seu foco é puramente tático e estatístico.`;
 
     let userPrompt = "";
-
     if (isPost) {
-      userPrompt = `Gere uma análise crítica pós-jogo curta e cirúrgica para a partida realizada em ${match.date} no estádio/cidade ${match.venue} entre ${match.team1} e ${match.team2}, que terminou com o placar de ${match.result}. Foque no porquê o resultado aconteceu taticamente em 3 linhas.`;
+      userPrompt = `Gere uma análise pós-jogo curta (3 linhas) para a partida de ${match.date} em ${match.venue} entre ${match.team1} e ${match.team2}. Placar: ${match.result}.`;
     } else {
-      userPrompt = `Analise taticamente a partida que vai acontecer pela Fase de Grupos da Copa de 2026:
-      - Seleção 1: ${match.team1}
-      - Seleção 2: ${match.team2}
-      - Sede/Clima: ${match.venue}
-      - Grupo: ${match.group}
-
-      Você DEVE responder ESTRITAMENTE com um objeto JSON válido. O formato precisa ser exatamente este:
-      {
-        "vencedor_provavel": "Nome da seleção ou Empate",
-        "confianca_vencedor": "Alta, Média ou Baixa",
-        "placar_provavel": "X-Y",
-        "xg_estimado": "Ex: 1.45 vs 0.82",
-        "ambos_marcam": "Sim ou Não",
-        "confianca_ambos": "Alta, Média ou Baixa",
-        "mais_menos_2_5": "Mais ou Menos",
-        "confianca_gols": "Alta, Média ou Baixa",
-        "dica_ouro": {
-          "mercado": "Ex: Handicap Asiático +0.5 Itália",
-          "justificativa": "Frase curta de valor tático."
-        },
-        "analise": "Seu parecer técnico de até 4 linhas."
-      }`;
+      userPrompt = `Analise taticamente a partida da Copa 2026: Seleção 1: ${match.team1}, Seleção 2: ${match.team2}, Sede: ${match.venue}, Grupo: ${match.group}. Responda estritamente com um JSON válido seguindo este modelo: {"vencedor_provavel": "Nome", "confianca_vencedor": "Alta", "placar_provavel": "1-0", "xg_estimado": "1.2 vs 0.8", "ambos_marcam": "Não", "confianca_ambos": "Média", "mais_menos_2_5": "Menos", "confianca_gols": "Alta", "dica_ouro": {"mercado": "X", "justificativa": "Y"}, "analise": "Texto"}`;
     }
 
-    const model = "gemini-1.5-flash";
+    // Payload estruturado seguindo rigorosamente a especificação v1 estável
     const payload = {
       contents: [{ parts: [{ text: userPrompt }] }],
       systemInstruction: { parts: [{ text: systemPrompt }] },
@@ -86,10 +64,10 @@ exports.handler = async (event, context) => {
 
     const postData = JSON.stringify(payload);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const options = {
         hostname: 'generativelanguage.googleapis.com',
-        path: `/v1/models/${model}:generateContent?key=${apiKey}`, // Rota atualizada para a estável /v1/
+        path: `/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +86,7 @@ exports.handler = async (event, context) => {
               resolve({
                 statusCode: res.statusCode,
                 headers: { 'Access-Control-Allow-Origin': '*' },
-                body: JSON.stringify({ error: data.error?.message || 'Erro na API do Gemini.' })
+                body: JSON.stringify({ error: data.error?.message || 'Erro de resposta da API Gemini.' })
               });
               return;
             }
@@ -127,7 +105,7 @@ exports.handler = async (event, context) => {
             resolve({
               statusCode: 500,
               headers: { 'Access-Control-Allow-Origin': '*' },
-              body: JSON.stringify({ error: 'Falha ao processar resposta do servidor de IA.' })
+              body: JSON.stringify({ error: 'Erro ao processar objeto JSON de retorno da IA.' })
             });
           }
         });
@@ -149,7 +127,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'Erro interno no servidor build nativo.' })
+      body: JSON.stringify({ error: 'Falha crítica na execução da função serverless.' })
     };
   }
 };
