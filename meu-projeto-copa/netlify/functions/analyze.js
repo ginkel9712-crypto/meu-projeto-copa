@@ -1,7 +1,6 @@
 const https = require('https');
 
 exports.handler = async (event, context) => {
-  // Headers de CORS para evitar travamentos de requisição
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -72,7 +71,6 @@ exports.handler = async (event, context) => {
       }`;
     }
 
-    // Configuração do payload do Gemini
     const model = "gemini-1.5-flash";
     const payload = {
       contents: [{ parts: [{ text: userPrompt }] }],
@@ -88,11 +86,10 @@ exports.handler = async (event, context) => {
 
     const postData = JSON.stringify(payload);
 
-    // Requisição usando estritamente o módulo HTTPS nativo do Node.js
     return new Promise((resolve, reject) => {
       const options = {
         hostname: 'generativelanguage.googleapis.com',
-        path: `/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        path: `/v1/models/${model}:generateContent?key=${apiKey}`, // Rota atualizada para a estável /v1/
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
