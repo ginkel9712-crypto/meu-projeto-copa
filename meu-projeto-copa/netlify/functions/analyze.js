@@ -1,3 +1,5 @@
+const https = require('https');
+
 exports.handler = async (event, context) => {
   // Headers de CORS para evitar travamentos de requisição
   if (event.httpMethod === 'OPTIONS') {
@@ -70,10 +72,8 @@ exports.handler = async (event, context) => {
       }`;
     }
 
-    // Configuração da requisição para a API oficial do Google Gemini
+    // Configuração do payload do Gemini
     const model = "gemini-1.5-flash";
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
     const payload = {
       contents: [{ parts: [{ text: userPrompt }] }],
       systemInstruction: { parts: [{ text: systemPrompt }] },
@@ -82,45 +82,77 @@ exports.handler = async (event, context) => {
       }
     };
 
-    // Força o Gemini a responder em JSON estrito se for pré-jogo
     if (!isPost) {
       payload.generationConfig.responseMimeType = "application/json";
     }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+    const postData = JSON.stringify(payload);
+
+    // Requisição usando estritamente o módulo HTTPS nativo do Node.js
+    return new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'generativelanguage.googleapis.com',
+        path: `/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
+
+      const req = https.request(options, (res) => {
+        let body = '';
+        res.on('data', (chunk) => body += chunk);
+        res.on('end', () => {
+          try {
+            const data = JSON.parse(body);
+
+            if (res.statusCode !== 200) {
+              resolve({
+                statusCode: res.statusCode,
+                headers: { 'Access-Control-Allow-Origin': '*' },
+                body: JSON.stringify({ error: data.error?.message || 'Erro na API do Gemini.' })
+              });
+              return;
+            }
+
+            const resultText = data.candidates[0].content.parts[0].text;
+            resolve({
+              statusCode: 200,
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ isPost, result: resultText })
+            });
+
+          } catch (err) {
+            resolve({
+              statusCode: 500,
+              headers: { 'Access-Control-Allow-Origin': '*' },
+              body: JSON.stringify({ error: 'Falha ao processar resposta do servidor de IA.' })
+            });
+          }
+        });
+      });
+
+      req.on('error', (e) => {
+        resolve({
+          statusCode: 500,
+          headers: { 'Access-Control-Allow-Origin': '*' },
+          body: JSON.stringify({ error: e.message })
+        });
+      });
+
+      req.write(postData);
+      req.end();
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        statusCode: response.status,
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ error: data.error?.message || 'Erro na comunicação com a API do Gemini.' })
-      };
-    }
-
-    // Extrai o texto gerado pelo modelo do Google
-    const resultText = data.candidates[0].content.parts[0].text;
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ isPost, result: resultText })
-    };
-
   } catch (error) {
-    console.error("Erro na Serverless Function:", error.message);
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'Erro interno ao processar dados com o Gemini.' })
+      body: JSON.stringify({ error: 'Erro interno no servidor build nativo.' })
     };
   }
 };
