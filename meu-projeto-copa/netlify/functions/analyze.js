@@ -1,7 +1,6 @@
 const https = require('https');
 
 exports.handler = async (event, context) => {
-  // Trata requisições OPTIONS (CORS)
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -40,22 +39,18 @@ exports.handler = async (event, context) => {
       };
     }
     
-    // Injetando as instruções do sistema direto dentro do prompt do usuário para total compatibilidade com a v1
-    const systemPrompt = `Você é um Analista de Apostas Esportivas Sênior e Cientista de Dados de Futebol com mais de 15 anos de experiência no mercado asiático. Seu foco é puramente tático e estatístico.\n\n`;
+    const systemPrompt = `Você é um Analista de Apostas Esportivas Sênior e Cientista de Dados de Futebol. Seu foco é tático e estatístico.\n\n`;
 
     let userPrompt = "";
     if (isPost) {
-      userPrompt = `${systemPrompt}Gere uma análise pós-jogo curta (3 linhas) para a partida de ${match.date} em ${match.venue} entre ${match.team1} e ${match.team2}. Placar: ${match.result}.`;
+      userPrompt = `${systemPrompt}Gere uma análise pós-jogo curta (3 linhas) para a partida de ${match.date} entre ${match.team1} e ${match.team2}. Placar: ${match.result}.`;
     } else {
-      userPrompt = `${systemPrompt}Analise taticamente a partida da Copa 2026: Seleção 1: ${match.team1}, Seleção 2: ${match.team2}, Sede: ${match.venue}, Grupo: ${match.group}.\n\nImportante: Responda APENAS com um objeto JSON válido (sem blocos de código markdown como \`\`\`json). Siga este modelo estrito:\n{"vencedor_provavel": "Nome", "confianca_vencedor": "Alta", "placar_provavel": "1-0", "xg_estimado": "1.2 vs 0.8", "ambos_marcam": "Não", "confianca_ambos": "Média", "mais_menos_2_5": "Menos", "confianca_gols": "Alta", "dica_ouro": {"mercado": "X", "justificativa": "Y"}, "analise": "Texto"}`;
+      userPrompt = `${systemPrompt}Analise taticamente a partida da Copa 2026: Seleção 1: ${match.team1}, Seleção 2: ${match.team2}. Responda APENAS com um objeto JSON válido (sem blocos markdown), seguindo este modelo:\n{"vencedor_provavel": "Nome", "confianca_vencedor": "Alta", "placar_provavel": "1-0", "xg_estimado": "1.2 vs 0.8", "ambos_marcam": "Não", "confianca_ambos": "Média", "mais_menos_2_5": "Menos", "confianca_gols": "Alta", "dica_ouro": {"mercado": "X", "justificativa": "Y"}, "analise": "Texto"}`;
     }
 
-    // Payload compatível com a rota original v1
+    // Estrutura ultra reduzida: impossível dar erro de parâmetro desconhecido
     const payload = {
-      contents: [{ parts: [{ text: userPrompt }] }],
-      generationConfig: {
-        temperature: 0.2
-      }
+      contents: [{ parts: [{ text: userPrompt }] }]
     };
 
     const postData = JSON.stringify(payload);
@@ -63,7 +58,6 @@ exports.handler = async (event, context) => {
     return new Promise((resolve) => {
       const options = {
         hostname: 'generativelanguage.googleapis.com',
-        // Mantendo estritamente a rota v1 que você estabeleceu
         path: `/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         method: 'POST',
         headers: {
@@ -83,14 +77,13 @@ exports.handler = async (event, context) => {
               resolve({
                 statusCode: res.statusCode,
                 headers: { 'Access-Control-Allow-Origin': '*' },
-                body: JSON.stringify({ error: data.error?.message || 'Erro de resposta da API Gemini.' })
+                body: JSON.stringify({ error: data.error?.message || 'Erro na API Gemini.' })
               });
               return;
             }
 
             let resultText = data.candidates[0].content.parts[0].text;
             
-            // Filtro para garantir que se a IA devolver blocos markdown (```json), o código limpe antes de retornar ao seu frontend
             if (resultText.includes('```json')) {
               resultText = resultText.split('```json')[1].split('```')[0].trim();
             } else if (resultText.includes('```')) {
@@ -99,10 +92,7 @@ exports.handler = async (event, context) => {
 
             resolve({
               statusCode: 200,
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
-              },
+              headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
               body: JSON.stringify({ isPost, result: resultText })
             });
 
@@ -110,7 +100,7 @@ exports.handler = async (event, context) => {
             resolve({
               statusCode: 500,
               headers: { 'Access-Control-Allow-Origin': '*' },
-              body: JSON.stringify({ error: 'Erro ao processar objeto JSON de retorno da IA.' })
+              body: JSON.stringify({ error: 'Erro ao processar JSON de retorno.' })
             });
           }
         });
@@ -132,7 +122,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'Falha crítica na execução da função serverless.' })
+      body: JSON.stringify({ error: 'Falha crítica na execução.' })
     };
   }
 };
