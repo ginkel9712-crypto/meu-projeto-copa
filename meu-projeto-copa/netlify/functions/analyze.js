@@ -1,7 +1,6 @@
 const https = require('https');
 
 exports.handler = async (event, context) => {
-  // Configuração nativa de CORS para evitar travamentos no navegador
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -49,17 +48,17 @@ exports.handler = async (event, context) => {
       userPrompt = `Analise taticamente a partida da Copa 2026: Seleção 1: ${match.team1}, Seleção 2: ${match.team2}, Sede: ${match.venue}, Grupo: ${match.group}. Responda estritamente com um JSON válido seguindo este modelo: {"vencedor_provavel": "Nome", "confianca_vencedor": "Alta", "placar_provavel": "1-0", "xg_estimado": "1.2 vs 0.8", "ambos_marcam": "Não", "confianca_ambos": "Média", "mais_menos_2_5": "Menos", "confianca_gols": "Alta", "dica_ouro": {"mercado": "X", "justificativa": "Y"}, "analise": "Texto"}`;
     }
 
-    // Payload estruturado seguindo rigorosamente a especificação v1 estável
+    // CORREÇÃO AQUI: Alterado estritamente para snake_case (system_instruction e generation_config)
     const payload = {
       contents: [{ parts: [{ text: userPrompt }] }],
-      systemInstruction: { parts: [{ text: systemPrompt }] },
-      generationConfig: {
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      generation_config: {
         temperature: 0.2
       }
     };
 
     if (!isPost) {
-      payload.generationConfig.responseMimeType = "application/json";
+      payload.generation_config.response_mime_type = "application/json"; // Mudado para response_mime_type
     }
 
     const postData = JSON.stringify(payload);
