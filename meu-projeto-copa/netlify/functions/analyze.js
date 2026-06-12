@@ -1,6 +1,7 @@
 const https = require('https');
 
 exports.handler = async (event, context) => {
+  // Trata requisições OPTIONS (CORS)
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -39,19 +40,22 @@ exports.handler = async (event, context) => {
       };
     }
     
-    // Injetando o comportamento do sistema direto no escopo do texto
-    const contextPrompt = `Contexto de atuação: Você é um Analista de Apostas Esportivas Sênior e Cientista de Dados de Futebol com mais de 15 anos de experiência no mercado asiático. Seu foco é puramente tático e estatístico.\n\n`;
+    // Injetando as instruções do sistema direto dentro do prompt do usuário para total compatibilidade com a v1
+    const systemPrompt = `Você é um Analista de Apostas Esportivas Sênior e Cientista de Dados de Futebol com mais de 15 anos de experiência no mercado asiático. Seu foco é puramente tático e estatístico.\n\n`;
 
     let userPrompt = "";
     if (isPost) {
-      userPrompt = `${contextPrompt}Gere uma análise pós-jogo curta (3 linhas) para a partida de ${match.date} em ${match.venue} entre ${match.team1} e ${match.team2}. Placar: ${match.result}.`;
+      userPrompt = `${systemPrompt}Gere uma análise pós-jogo curta (3 linhas) para a partida de ${match.date} em ${match.venue} entre ${match.team1} e ${match.team2}. Placar: ${match.result}.`;
     } else {
-      userPrompt = `${contextPrompt}Analise taticamente a partida da Copa 2026: Seleção 1: ${match.team1}, Seleção 2: ${match.team2}, Sede: ${match.venue}, Grupo: ${match.group}.\n\nExigência crucial: Responda APENAS E EXCLUSIVAMENTE com um objeto JSON válido, sem usar marcações de código markdown (não coloque \`\`\`json no início nem \`\`\` no fim). Siga exatamente esta estrutura:\n{"vencedor_provavel": "Nome", "confianca_vencedor": "Alta", "placar_provavel": "1-0", "xg_estimado": "1.2 vs 0.8", "ambos_marcam": "Não", "confianca_ambos": "Média", "mais_menos_2_5": "Menos", "confianca_gols": "Alta", "dica_ouro": {"mercado": "X", "justificativa": "Y"}, "analise": "Texto"}`;
+      userPrompt = `${systemPrompt}Analise taticamente a partida da Copa 2026: Seleção 1: ${match.team1}, Seleção 2: ${match.team2}, Sede: ${match.venue}, Grupo: ${match.group}.\n\nImportante: Responda APENAS com um objeto JSON válido (sem blocos de código markdown como \`\`\`json). Siga este modelo estrito:\n{"vencedor_provavel": "Nome", "confianca_vencedor": "Alta", "placar_provavel": "1-0", "xg_estimado": "1.2 vs 0.8", "ambos_marcam": "Não", "confianca_ambos": "Média", "mais_menos_2_5": "Menos", "confianca_gols": "Alta", "dica_ouro": {"mercado": "X", "justificativa": "Y"}, "analise": "Texto"}`;
     }
 
-    // Payload ultra-simplificado: imune a erros de propriedades desconhecidas
+    // Payload compatível com a rota original v1
     const payload = {
-      contents: [{ parts: [{ text: userPrompt }] }]
+      contents: [{ parts: [{ text: userPrompt }] }],
+      generationConfig: {
+        temperature: 0.2
+      }
     };
 
     const postData = JSON.stringify(payload);
@@ -59,6 +63,7 @@ exports.handler = async (event, context) => {
     return new Promise((resolve) => {
       const options = {
         hostname: 'generativelanguage.googleapis.com',
+        // Mantendo estritamente a rota v1 que você estabeleceu
         path: `/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         method: 'POST',
         headers: {
@@ -85,7 +90,7 @@ exports.handler = async (event, context) => {
 
             let resultText = data.candidates[0].content.parts[0].text;
             
-            // Proteção extra: Caso a IA ignore o comando e envie blocos com ```json, limpamos aqui no backend
+            // Filtro para garantir que se a IA devolver blocos markdown (```json), o código limpe antes de retornar ao seu frontend
             if (resultText.includes('```json')) {
               resultText = resultText.split('```json')[1].split('```')[0].trim();
             } else if (resultText.includes('```')) {
