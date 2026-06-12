@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 exports.handler = async (event, context) => {
   // Ajuste de Headers de CORS para evitar travamentos locais
   if (event.httpMethod === 'OPTIONS') {
@@ -26,16 +24,13 @@ exports.handler = async (event, context) => {
     }
 
     const isPost = match.result !== null;
-
-    // Chave de API - Lembre-se de configurar nas variáveis de ambiente da Netlify (OPENAI_API_KEY ou a que usar)
     const apiKey = process.env.OPENAI_API_KEY; 
     
-    // Engenharia de Prompt Sênior para Garantia de Rigor Estatístico
     const systemPrompt = `Você é um Analista de Apostas Esportivas Sênior e Cientista de Dados de Futebol com mais de 15 anos de experiência e taxa de acerto auditada superior a 90% no mercado asiático.
     Seu foco é puramente matemático, tático e frio. Você desconsidera favoritismos históricos vazios e foca em:
     1. Projeção de xG (Expected Goals) baseado no estilo de jogo.
-    2. Encaixe Tático (Ex: Se um time joga em bloco baixo reativo contra um time de posse lenta).
-    3. Fatores de Desgaste Logístico na Copa de 2026 (Grandes viagens entre EUA, Canadá e México, climas e altitudes como o da Cidade do México).
+    2. Encaixe Tático.
+    3. Fatores de Desgaste Logístico na Copa de 2026.
     4. Linhas de Valor Justo (Value Bets).`;
 
     let userPrompt = "";
@@ -46,7 +41,7 @@ exports.handler = async (event, context) => {
       userPrompt = `Analise taticamente a partida que vai acontecer pela Fase de Grupos da Copa de 2026:
       - Seleção 1: ${match.team1}
       - Seleção 2: ${match.team2}
-      - Sede/Clima: ${match.venue} (Considere a logística e fusos horários da Copa de 2026)
+      - Sede/Clima: ${match.venue}
       - Grupo: ${match.group}
 
       Você DEVE responder ESTRITAMENTE com um objeto JSON válido, sem markdown extra fora do bloco JSON. O formato precisa ser exatamente este:
@@ -60,29 +55,41 @@ exports.handler = async (event, context) => {
         "mais_menos_2_5": "Mais ou Menos",
         "confianca_gols": "Alta, Média ou Baixa",
         "dica_ouro": {
-          "mercado": "Ex: Handicap Asiático +0.5 Itália ou Menos de 2.5 Gols",
-          "justificativa": "Frase curta de altíssimo valor tático justificando por que essa aposta tem valor matemático."
+          "mercado": "Ex: Handicap Asiático +0.5 Itália",
+          "justificativa": "Frase curta de valor tático."
         },
-        "analise": "Seu parecer técnico de até 4 linhas detalhando o encaixe tático, postura esperada das equipes e impacto do local da partida."
+        "analise": "Seu parecer técnico de até 4 linhas."
       }`;
     }
 
-    // Exemplo usando a API da OpenAI (pode adaptar para o provedor de IA de sua preferência)
-    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-      model: 'gpt-4o', // Ou o modelo atual disponível com alta capacidade analítica
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      temperature: 0.2 // Temperatura baixa força o modelo a ser mais consistente e determinístico (matemático)
-    }, {
+    // Trocado Axios por Fetch Nativo (Zero dependências para o Netlify quebrar)
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
-      }
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.2
+      })
     });
 
-    const resultText = response.data.choices[0].messages.content;
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        statusCode: response.status,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: data.error?.message || 'Erro na comunicação com a API de IA.' })
+      };
+    }
+
+    const resultText = data.choices[0].message.content;
 
     return {
       statusCode: 200,
@@ -94,7 +101,7 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error("Erro na Serverless Function:", error.response ? error.response.data : error.message);
+    console.error("Erro na Serverless Function:", error.message);
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': '*' },
