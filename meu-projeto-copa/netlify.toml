@@ -1,0 +1,13 @@
+[build]
+  # Força o Netlify a entrar na pasta correta antes de iniciar o deploy
+  base = "meu-projeto-copa"
+  
+  # Indica onde está o index.html relativo à pasta base
+  publish = "."
+  
+  # Indica onde estão as funções serverless relativas à pasta base
+  functions = "netlify/functions"
+
+[functions]
+  # Garante que o Netlify use a engine moderna de empacotamento nativo
+  node_bundler = "esbuild"
