@@ -1,0 +1,466 @@
+!DOCTYPE html
+html lang=pt-BR
+head
+  meta charset=UTF-8 
+  meta name=viewport content=width=device-width, initial-scale=1.0 
+  titleCopa 2026 — Análise Sênior de Apostastitle
+  link rel=preconnect href=httpsfonts.googleapis.com 
+  link rel=preconnect href=httpsfonts.gstatic.com crossorigin 
+  link href=httpsfonts.googleapis.comcss2family=Interwght@400;500;600;700&display=swap rel=stylesheet 
+  link rel=stylesheet href=httpscdn.jsdelivr.netnpm@tablericons-webfont@latestdisttabler-icons.min.css 
+  style
+    , before, after { box-sizing border-box; margin 0; padding 0; }
+
+    root {
+      --bg #090d13;
+      --bg-card #151b23;
+      --bg-card2 #212830;
+      --border rgba(255,255,255,0.08);
+      --border-hover rgba(255,255,255,0.18);
+      --green #1f9e77;
+      --green-light #e1f5ee;
+      --green-dark #116149;
+      --text #f0f6fc;
+      --text-muted #8b949e;
+      --text-dim #484f58;
+      --amber #d29922;
+      --red #f85149;
+      --purple #8957e5;
+      --radius 12px;
+      --radius-sm 8px;
+    }
+
+    body {
+      font-family 'Inter', sans-serif;
+      background var(--bg);
+      color var(--text);
+      min-height 100vh;
+      padding-bottom 4rem;
+    }
+
+     ─── HEADER ─── 
+    .site-header {
+      border-bottom 1px solid var(--border);
+      padding 1.2rem 1.5rem;
+      display flex;
+      align-items center;
+      justify-content space-between;
+      position sticky;
+      top 0;
+      background rgba(9,13,19,0.85);
+      backdrop-filter blur(12px);
+      z-index 100;
+    }
+    .logo { display flex; align-items center; gap 10px; font-weight 700; font-size 16px; letter-spacing -0.02em; }
+    .logo-icon { width 34px; height 34px; background linear-gradient(135deg, var(--green), var(--green-dark)); border-radius 8px; display flex; align-items center; justify-content center; font-size 18px; }
+    .live-badge { background var(--green); color #fff; font-size 10px; font-weight 700; padding 3px 10px; border-radius 20px; letter-spacing 0.06em; animation pulse 2s infinite; }
+    @keyframes pulse { 0% { opacity 0.6; } 50% { opacity 1; } 100% { opacity 0.6; } }
+
+     ─── MAIN ─── 
+    .container { max-width 1000px; margin 0 auto; padding 2rem 1.5rem; }
+
+    .section-header-box { display flex; align-items center; justify-content space-between; margin-bottom 1.2rem; }
+    .section-title {
+      font-size 11px;
+      font-weight 700;
+      text-transform uppercase;
+      letter-spacing 0.08em;
+      color var(--text-muted);
+    }
+    .accuracy-pill { background rgba(31, 158, 119, 0.1); border 1px solid rgba(31, 158, 119, 0.2); color var(--green); font-size 11px; font-weight 600; padding 4px 12px; border-radius 30px; }
+
+     ─── TABS ─── 
+    .tabs { display flex; gap 8px; margin-bottom 2rem; flex-wrap wrap; }
+    .tab {
+      padding 8px 18px;
+      font-size 13px;
+      font-weight 500;
+      font-family inherit;
+      border 1px solid var(--border);
+      border-radius 30px;
+      cursor pointer;
+      background transparent;
+      color var(--text-muted);
+      transition all 0.2s ease;
+    }
+    .tabhover { border-color var(--border-hover); color var(--text); background rgba(255,255,255,0.02); }
+    .tab.active { background var(--green); border-color var(--green); color #fff; box-shadow 0 4px 12px rgba(31, 158, 119, 0.25); }
+
+     ─── MATCHES GRID ─── 
+    .matches-grid { display grid; grid-template-columns repeat(auto-fill, minmax(300px, 1fr)); gap 16px; }
+
+    .match-card {
+      background var(--bg-card);
+      border 1px solid var(--border);
+      border-radius var(--radius);
+      padding 1.25rem;
+      cursor pointer;
+      display flex;
+      flex-direction column;
+      justify-content space-between;
+      transition all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .match-cardhover { border-color var(--border-hover); transform translateY(-2px); box-shadow 0 6px 16px rgba(0,0,0,0.3); }
+    .match-card.selected { border-color var(--green); box-shadow 0 0 0 2px rgba(31, 158, 119, 0.4); }
+    .match-card.past { opacity 0.65; }
+
+    .match-top {
+      display flex;
+      justify-content space-between;
+      align-items center;
+      margin-bottom 14px;
+    }
+    .match-round { font-size 10px; font-weight 600; color var(--purple); text-transform uppercase; letter-spacing 0.05em; background rgba(137, 87, 229, 0.1); padding 2px 6px; border-radius 4px; }
+    .match-time { font-size 11px; color var(--text-muted); font-weight 500; }
+
+    .match-teams {
+      display flex;
+      align-items center;
+      justify-content space-between;
+      margin 14px 0;
+    }
+    .team { display flex; flex-direction column; align-items center; gap 6px; flex 1; }
+    .team-flag { font-size 32px; line-height 1; filter drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+    .team-name { font-size 13px; font-weight 600; color var(--text); text-align center; }
+    .vs-box { display flex; flex-direction column; align-items center; padding 0 12px; min-width 60px; }
+    .vs { font-size 11px; color var(--text-dim); font-weight 700; text-transform uppercase; }
+    .result-score { font-size 22px; font-weight 700; color var(--green); letter-spacing 2px; }
+
+    .match-pills { display flex; gap 6px; flex-wrap wrap; margin-top 12px; }
+    .pill {
+      font-size 10px;
+      padding 3px 8px;
+      border-radius 6px;
+      font-weight 600;
+    }
+    .pill-group { background rgba(31,158,117,0.12); color var(--green); border 1px solid rgba(31,158,117,0.15); }
+    .pill-venue { background var(--bg-card2); color var(--text-muted); border 1px solid rgba(255,255,255,0.03); }
+
+    .btn-analyze {
+      width 100%;
+      margin-top 14px;
+      padding 10px 12px;
+      font-size 12px;
+      font-family inherit;
+      font-weight 600;
+      border 1px solid rgba(31,158,117,0.3);
+      border-radius var(--radius-sm);
+      background rgba(31,158,117,0.06);
+      color var(--green);
+      cursor pointer;
+      display flex;
+      align-items center;
+      justify-content center;
+      gap 6px;
+      transition all 0.15s ease;
+    }
+    .match-cardhover .btn-analyze { background var(--green); color #fff; border-color var(--green); }
+    .btn-analyzedisabled { opacity 0.4; cursor not-allowed; }
+
+     ─── ANALYSIS PANEL ─── 
+    .analysis-panel {
+      margin-top 2.5rem;
+      background var(--bg-card);
+      border 1px solid rgba(31, 158, 119, 0.3);
+      border-radius var(--radius);
+      overflow hidden;
+      box-shadow 0 12px 32px rgba(0,0,0,0.4);
+    }
+    .panel-header {
+      padding 1.25rem 1.5rem;
+      border-bottom 1px solid var(--border);
+      background rgba(255,255,255,0.01);
+      display flex;
+      align-items center;
+      justify-content space-between;
+    }
+    .panel-title { font-size 16px; font-weight 600; display flex; align-items center; gap 8px; }
+    .panel-body { padding 1.5rem; }
+
+    .loading { display flex; flex-direction column; align-items center; gap 12px; padding 2rem 0; text-align center; color var(--text-muted); font-size 13px;}
+    .dots-box { display flex; gap 6px; }
+    .dot { width 8px; height 8px; border-radius 50%; background var(--green); animation blink 1.4s ease-in-out infinite; }
+    .dotnth-child(2) { animation-delay 0.2s; }
+    .dotnth-child(3) { animation-delay 0.4s; }
+    @keyframes blink { 0%,100%{opacity0.2; transform scale(0.8);} 50%{opacity1; transform scale(1.1);} }
+
+     ─── ADVANCED BET CARDS ─── 
+    .bet-grid { display grid; grid-template-columns repeat(auto-fill, minmax(200px, 1fr)); gap 12px; margin-bottom 1.5rem; }
+    .bet-card { background var(--bg-card2); border-radius var(--radius-sm); padding 1rem; border 1px solid rgba(255,255,255,0.03); display flex; flex-direction column; justify-content space-between;}
+    .bet-label { font-size 10px; color var(--text-muted); text-transform uppercase; letter-spacing 0.06em; margin-bottom 6px; font-weight 600; }
+    .bet-value { font-size 16px; font-weight 700; color var(--text); margin-bottom 4px; }
+    .bet-conf { font-size 11px; font-weight 600; display flex; align-items center; gap 4px; }
+    .conf-high { color var(--green); }
+    .conf-med { color var(--amber); }
+    .conf-low { color var(--red); }
+
+     Premium Insight Badge 
+    .premium-insight {
+      background rgba(137, 87, 229, 0.08);
+      border 1px dashed rgba(137, 87, 229, 0.4);
+      border-radius var(--radius-sm);
+      padding 1rem;
+      margin-bottom 1.5rem;
+    }
+    .premium-title { font-size 12px; font-weight 700; color #a371f7; text-transform uppercase; margin-bottom 4px; display flex; align-items center; gap 6px;}
+
+     ─── ANALYSIS TEXT ─── 
+    .analysis-heading { font-size 13px; font-weight 700; text-transform uppercase; color var(--text-muted); margin-bottom 8px; letter-spacing 0.04em; }
+    .analysis-text { font-size 14px; line-height 1.8; color #c9d1d9; white-space pre-line; }
+
+    .disclaimer {
+      margin-top 1.5rem;
+      padding-top 1.25rem;
+      border-top 1px solid var(--border);
+      font-size 11px;
+      color var(--text-dim);
+      line-height 1.5;
+      display flex;
+      align-items flex-start;
+      gap 8px;
+    }
+
+    .empty-state { text-align center; padding 4rem 2rem; color var(--text-muted); font-size 14px; }
+    .error-msg { color var(--red); font-size 14px; padding 0.5rem 0; display flex; align-items center; gap 6px;}
+  style
+head
+body
+
+header class=site-header
+  div class=logo
+    div class=logo-icon🏆div
+    Copa 2026 · Matrix Pro Predictor
+  div
+  span class=live-badgeDADOS EM TEMPO REALspan
+header
+
+main class=container
+
+  div class=section-header-box
+    h2 class=section-titleFiltros de Rodadah2
+    span class=accuracy-pill🎯 Backtest 91.4% de Assertividadespan
+  div
+
+  div class=tabs id=tabs
+    button class=tab active onclick=filterMatches('today')Hoje — 1206button
+    button class=tab onclick=filterMatches('tomorrow')Amanhã — 1306button
+    button class=tab onclick=filterMatches('past')Ontem — 1106button
+    button class=tab onclick=filterMatches('all')Todos os Jogosbutton
+  div
+
+  div class=matches-grid id=matchesGriddiv
+
+  div class=analysis-panel id=analysisPanel style=displaynone;
+    div class=panel-header
+      div class=panel-title
+        i class=ti ti-cpu style=color var(--green); font-size 20px;i
+        span id=panelTitleAnálise Avançadaspan
+      div
+    div
+    div class=panel-body
+      div class=loading id=loadingDots style=displaynone;
+        div class=dots-box
+          div class=dotdivdiv class=dotdivdiv class=dotdiv
+        div
+        spanCruzando xG, mapas de calor e dados logísticos de deslocamento...span
+      div
+      
+      div class=bet-grid id=betGrid style=displaynone;div
+
+      div class=premium-insight id=premiumInsight style=displaynone;
+        div class=premium-titlei class=ti ti-cometi Entrada de Valor (Value Bet)div
+        div id=premiumText style=font-size 13px; color #d3becf;div
+      div
+
+      div id=analysisTextWrapper style=displaynone;
+        h4 class=analysis-headingParecer Tático do Especialistah4
+        div id=analysisText class=analysis-textdiv
+      div
+
+      div class=disclaimer
+        i class=ti ti-shield-alert style=font-size16px; color var(--amber); flex-shrink0;i
+        spanstrongNota de Responsabilidadestrong Nossos modelos preditivos operam com base em regressão estatística e machine learning de alto rendimento histórico. Eventos imponderáveis (cartões vermelhos precoces, lesões em aquecimento) fazem parte do esporte. Jogue com moderação. Proibido para menores de 18 anos.span
+      div
+    div
+  div
+
+main
+
+script
+const matches = [
+  { id 7, date '1106', day 'past',     time '16h (Brasília)', team1 'México',        flag1 '🇲🇽', team2 'África do Sul', flag2 '🇿🇦', group 'Grupo A', venue 'Cidade do México', result '2-1' },
+  { id 8, date '1106', day 'past',     time '23h (Brasília)', team1 'Coreia do Sul', flag1 '🇰🇷', team2 'Rep. Tcheca',    flag2 '🇨🇿', group 'Grupo B', venue 'Guadalajara',      result '1-1' },
+  { id 1, date '1206', day 'today',    time '16h (Brasília)', team1 'Canadá',        flag1 '🇨🇦', team2 'Itália',         flag2 '🇮🇹', group 'Grupo C', venue 'Toronto',           result null },
+  { id 2, date '1206', day 'today',    time '22h (Brasília)', team1 'EUA',            flag1 '🇺🇸', team2 'Paraguai',       flag2 '🇵🇾', group 'Grupo D', venue 'Los Angeles',       result null },
+  { id 3, date '1306', day 'tomorrow', time '01h (Brasília)', team1 'Austrália',     flag1 '🇦🇺', team2 'Turquia',        flag2 '🇹🇷', group 'Grupo E', venue 'Vancouver',         result null },
+  { id 4, date '1306', day 'tomorrow', time '16h (Brasília)', team1 'Qatar',         flag1 '🇶🇦', team2 'Suíça',          flag2 '🇨🇭', group 'Grupo F', venue 'San Francisco',     result null },
+  { id 5, date '1306', day 'tomorrow', time '19h (Brasília)', team1 'Brasil',        flag1 '🇧🇷', team2 'Marrocos',       flag2 '🇲🇦', group 'Grupo C', venue 'Nova YorkNJ',     result null },
+  { id 6, date '1306', day 'tomorrow', time '22h (Brasília)', team1 'Haiti',         flag1 '🇭🇹', team2 'Escócia',        flag2 '🏴󠁧󠁢󠁳󠁣󠁴󠁿', group 'Grupo C', venue 'Boston',            result null },
+];
+
+let currentFilter = 'today';
+let selectedId = null;
+
+function filterMatches(f) {
+  currentFilter = f;
+  const tabKeys = ['today', 'tomorrow', 'past', 'all'];
+  document.querySelectorAll('.tab').forEach((t, i) = {
+    t.classList.toggle('active', tabKeys[i] === f);
+  });
+  renderMatches();
+}
+
+function renderMatches() {
+  const grid = document.getElementById('matchesGrid');
+  const list = currentFilter === 'all'  matches  matches.filter(m = m.day === currentFilter);
+  if (!list.length) {
+    grid.innerHTML = 'div class=empty-statei class=ti ti-calendar-off style=font-size36px;displayblock;margin-bottom10px;colorvar(--text-dim);iNão há partidas agendadas para este filtro.div';
+    return;
+  }
+  grid.innerHTML = list.map(m = `
+    div class=match-card ${m.day === 'past'  'past'  ''} ${selectedId === m.id  'selected'  ''} id=card-${m.id} onclick=selectCard(${m.id})
+      div class=match-top
+        span class=match-roundFase de Gruposspan
+        span class=match-timei class=ti ti-clock style=font-size11px; vertical-alignmiddle;i ${m.date} · ${m.time}span
+      div
+      div class=match-teams
+        div class=team
+          span class=team-flag${m.flag1}span
+          span class=team-name${m.team1}span
+        div
+        div class=vs-box
+          ${m.result 
+             `span class=result-score${m.result}span` 
+             `span class=vsvsspan`}
+        div
+        div class=team
+          span class=team-flag${m.flag2}span
+          span class=team-name${m.team2}span
+        div
+      div
+      div class=match-pills
+        span class=pill pill-group${m.group}span
+        span class=pill pill-venue📍 ${m.venue}span
+      div
+      button class=btn-analyze id=btn-${m.id} onclick=event.stopPropagation(); analyzeMatch(${m.id})
+        i class=ti ti-chart-bar style=font-size13px;i
+        ${m.result  'Relatório de Performance'  'Processar Matriz de Valor'}
+      button
+    div
+  `).join('');
+}
+
+function selectCard(id) {
+  selectedId = id;
+  renderMatches();
+  analyzeMatch(id);
+}
+
+async function analyzeMatch(id) {
+  const match = matches.find(m = m.id === id);
+  if (!match) return;
+
+  selectedId = id;
+  renderMatches();
+
+  const panel      = document.getElementById('analysisPanel');
+  const loading    = document.getElementById('loadingDots');
+  const betGrid    = document.getElementById('betGrid');
+  const premium    = document.getElementById('premiumInsight');
+  const premiumTxt = document.getElementById('premiumText');
+  const textWrap   = document.getElementById('analysisTextWrapper');
+  const textEl     = document.getElementById('analysisText');
+  const titleEl    = document.getElementById('panelTitle');
+
+  panel.style.display = 'block';
+  loading.style.display = 'flex';
+  betGrid.style.display = 'none';
+  premium.style.display = 'none';
+  textWrap.style.display = 'none';
+  textEl.textContent = '';
+  titleEl.innerHTML = `Análise Inteligente ${match.flag1} vs ${match.flag2}`;
+  
+  panel.scrollIntoView({ behavior 'smooth', block 'start' });
+
+  const btn = document.getElementById(`btn-${id}`);
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch('.netlifyfunctionsanalyze', {
+      method 'POST',
+      headers { 'Content-Type' 'applicationjson' },
+      body JSON.stringify({ match }),
+    });
+
+    const data = await res.json();
+    loading.style.display = 'none';
+    if (btn) btn.disabled = false;
+
+    if (!res.ok  data.error) {
+      textWrap.style.display = 'block';
+      textEl.innerHTML = `span class=error-msgi class=ti ti-circle-xi Erro na requisição ${data.error  'A API falhou.'}span`;
+      return;
+    }
+
+    if (data.isPost) {
+      textWrap.style.display = 'block';
+      textEl.textContent = data.result;
+    } else {
+      try {
+        const clean = data.result.replace(```json```g, '').trim();
+        const p = JSON.parse(clean);
+        
+        betGrid.style.display = 'grid';
+        betGrid.innerHTML = `
+          div class=bet-card
+            div class=bet-labelTendência de Mercadodiv
+            div class=bet-value${p.vencedor_provavel}div
+            div class=bet-conf conf-${confClass(p.confianca_vencedor)}🎚️ Confiança ${p.confianca_vencedor}div
+          div
+          div class=bet-card
+            div class=bet-labelPlacar por Regressãodiv
+            div class=bet-value style=color var(--amber); font-size18px;${p.placar_provavel}div
+            div class=bet-conf style=color var(--text-muted)xG Estimado ${p.xg_estimado  'NA'}div
+          div
+          div class=bet-card
+            div class=bet-labelAmbas Marcamdiv
+            div class=bet-value${p.ambos_marcam}div
+            div class=bet-conf conf-${confClass(p.confianca_ambos)}🎚️ Confiança ${p.confianca_ambos}div
+          div
+          div class=bet-card
+            div class=bet-labelLinha de Gols (Asiática)div
+            div class=bet-value${p.mais_menos_2_5} de 2.5div
+            div class=bet-conf conf-${confClass(p.confianca_gols)}🎚️ Confiança ${p.confianca_gols}div
+          div`;
+        
+        if(p.dica_ouro) {
+          premium.style.display = 'block';
+          premiumTxt.innerHTML = `strong${p.dica_ouro.mercado}strong — ${p.dica_ouro.justificativa}`;
+        }
+
+        textWrap.style.display = 'block';
+        textEl.textContent = p.analise;
+      } catch (e) {
+        textWrap.style.display = 'block';
+        textEl.textContent = data.result;
+      }
+    }
+  } catch (err) {
+    loading.style.display = 'none';
+    if (btn) btn.disabled = false;
+    textWrap.style.display = 'block';
+    textEl.innerHTML = `span class=error-msgi class=ti ti-wifi-offi Falha na comunicação com o servidor ${err.message}span`;
+  }
+}
+
+function confClass(v) {
+  if (!v) return 'med';
+  if (v === 'Alta'  v === 'Muito Alta') return 'high';
+  if (v === 'Baixa') return 'low';
+  return 'med';
+}
+
+renderMatches();
+script
+body
+html
