@@ -48,17 +48,17 @@ exports.handler = async (event, context) => {
       userPrompt = `Analise taticamente a partida da Copa 2026: Seleção 1: ${match.team1}, Seleção 2: ${match.team2}, Sede: ${match.venue}, Grupo: ${match.group}. Responda estritamente com um JSON válido seguindo este modelo: {"vencedor_provavel": "Nome", "confianca_vencedor": "Alta", "placar_provavel": "1-0", "xg_estimado": "1.2 vs 0.8", "ambos_marcam": "Não", "confianca_ambos": "Média", "mais_menos_2_5": "Menos", "confianca_gols": "Alta", "dica_ouro": {"mercado": "X", "justificativa": "Y"}, "analise": "Texto"}`;
     }
 
-    // CORREÇÃO AQUI: Alterado estritamente para snake_case (system_instruction e generation_config)
+    // CORREÇÃO: Voltando para o camelCase exigido pela API do Google
     const payload = {
       contents: [{ parts: [{ text: userPrompt }] }],
-      system_instruction: { parts: [{ text: systemPrompt }] },
-      generation_config: {
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      generationConfig: {
         temperature: 0.2
       }
     };
 
     if (!isPost) {
-      payload.generation_config.response_mime_type = "application/json"; // Mudado para response_mime_type
+      payload.generationConfig.responseMimeType = "application/json"; 
     }
 
     const postData = JSON.stringify(payload);
