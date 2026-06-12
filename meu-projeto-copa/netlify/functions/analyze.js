@@ -1,5 +1,5 @@
 exports.handler = async (event, context) => {
-  // Ajuste de Headers de CORS para evitar travamentos locais
+  // Headers de CORS para evitar travamentos de requisição
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -24,7 +24,15 @@ exports.handler = async (event, context) => {
     }
 
     const isPost = match.result !== null;
-    const apiKey = process.env.OPENAI_API_KEY; 
+    const apiKey = process.env.GEMINI_API_KEY; 
+
+    if (!apiKey) {
+      return { 
+        statusCode: 500, 
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: 'A chave GEMINI_API_KEY não foi configurada no painel do Netlify.' }) 
+      };
+    }
     
     const systemPrompt = `Você é um Analista de Apostas Esportivas Sênior e Cientista de Dados de Futebol com mais de 15 anos de experiência e taxa de acerto auditada superior a 90% no mercado asiático.
     Seu foco é puramente matemático, tático e frio. Você desconsidera favoritismos históricos vazios e foca em:
@@ -44,7 +52,7 @@ exports.handler = async (event, context) => {
       - Sede/Clima: ${match.venue}
       - Grupo: ${match.group}
 
-      Você DEVE responder ESTRITAMENTE com um objeto JSON válido, sem markdown extra fora do bloco JSON. O formato precisa ser exatamente este:
+      Você DEVE responder ESTRITAMENTE com um objeto JSON válido. O formato precisa ser exatamente este:
       {
         "vencedor_provavel": "Nome da seleção ou Empate",
         "confianca_vencedor": "Alta, Média ou Baixa",
@@ -62,21 +70,27 @@ exports.handler = async (event, context) => {
       }`;
     }
 
-    // Trocado Axios por Fetch Nativo (Zero dependências para o Netlify quebrar)
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
+    // Configuração da requisição para a API oficial do Google Gemini
+    const model = "gemini-1.5-flash";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+    const payload = {
+      contents: [{ parts: [{ text: userPrompt }] }],
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      generationConfig: {
         temperature: 0.2
-      })
+      }
+    };
+
+    // Força o Gemini a responder em JSON estrito se for pré-jogo
+    if (!isPost) {
+      payload.generationConfig.responseMimeType = "application/json";
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
@@ -85,11 +99,12 @@ exports.handler = async (event, context) => {
       return {
         statusCode: response.status,
         headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ error: data.error?.message || 'Erro na comunicação com a API de IA.' })
+        body: JSON.stringify({ error: data.error?.message || 'Erro na comunicação com a API do Gemini.' })
       };
     }
 
-    const resultText = data.choices[0].message.content;
+    // Extrai o texto gerado pelo modelo do Google
+    const resultText = data.candidates[0].content.parts[0].text;
 
     return {
       statusCode: 200,
@@ -105,7 +120,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'Erro interno ao computar probabilidades estatísticas.' })
+      body: JSON.stringify({ error: 'Erro interno ao processar dados com o Gemini.' })
     };
   }
 };
