@@ -38,7 +38,6 @@
       padding-bottom: 4rem;
     }
 
-    /* ─── HEADER ─── */
     .site-header {
       border-bottom: 1px solid var(--border);
       padding: 1.2rem 1.5rem;
@@ -56,20 +55,12 @@
     .live-badge { background: var(--green); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.06em; animation: pulse 2s infinite; }
     @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-    /* ─── MAIN ─── */
     .container { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
 
     .section-header-box { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
-    .section-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-    }
+    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
     .accuracy-pill { background: rgba(31, 158, 119, 0.1); border: 1px solid rgba(31, 158, 119, 0.2); color: var(--green); font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 30px; }
 
-    /* ─── TABS ─── */
     .tabs { display: flex; gap: 8px; margin-bottom: 2rem; flex-wrap: wrap; }
     .tab {
       padding: 8px 18px;
@@ -86,7 +77,6 @@
     .tab:hover { border-color: var(--border-hover); color: var(--text); background: rgba(255,255,255,0.02); }
     .tab.active { background: var(--green); border-color: var(--green); color: #fff; box-shadow: 0 4px 12px rgba(31, 158, 119, 0.25); }
 
-    /* ─── MATCHES GRID ─── */
     .matches-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 
     .match-card {
@@ -104,21 +94,11 @@
     .match-card.selected { border-color: var(--green); box-shadow: 0 0 0 2px rgba(31, 158, 119, 0.4); }
     .match-card.past { opacity: 0.65; }
 
-    .match-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
+    .match-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .match-round { font-size: 10px; font-weight: 600; color: var(--purple); text-transform: uppercase; letter-spacing: 0.05em; background: rgba(137, 87, 229, 0.1); padding: 2px 6px; border-radius: 4px; }
     .match-time { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
-    .match-teams {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 14px 0;
-    }
+    .match-teams { display: flex; align-items: center; justify-content: space-between; margin: 14px 0; }
     .team { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
     .team-flag { font-size: 32px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
     .team-name { font-size: 13px; font-weight: 600; color: var(--text); text-align: center; }
@@ -127,12 +107,7 @@
     .result-score { font-size: 22px; font-weight: 700; color: var(--green); letter-spacing: 2px; }
 
     .match-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
-    .pill {
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
+    .pill { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
     .pill-group { background: rgba(31,158,117,0.12); color: var(--green); border: 1px solid rgba(31,158,117,0.15); }
     .pill-venue { background: var(--bg-card2); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.03); }
 
@@ -157,7 +132,6 @@
     .match-card:hover .btn-analyze { background: var(--green); color: #fff; border-color: var(--green); }
     .btn-analyze:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ─── ANALYSIS PANEL ─── */
     .analysis-panel {
       margin-top: 2.5rem;
       background: var(--bg-card);
@@ -184,7 +158,6 @@
     .dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes blink { 0%,100%{opacity:0.2; transform: scale(0.8);} 50%{opacity:1; transform: scale(1.1);} }
 
-    /* ─── ADVANCED BET CARDS ─── */
     .bet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
     .bet-card { background: var(--bg-card2); border-radius: var(--radius-sm); padding: 1rem; border: 1px solid rgba(255,255,255,0.03); display: flex; flex-direction: column; justify-content: space-between;}
     .bet-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; font-weight: 600; }
@@ -194,7 +167,6 @@
     .conf-med { color: var(--amber); }
     .conf-low { color: var(--red); }
 
-    /* Premium Insight Badge */
     .premium-insight {
       background: rgba(137, 87, 229, 0.08);
       border: 1px dashed rgba(137, 87, 229, 0.4);
@@ -204,7 +176,6 @@
     }
     .premium-title { font-size: 12px; font-weight: 700; color: #a371f7; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;}
 
-    /* ─── ANALYSIS TEXT ─── */
     .analysis-heading { font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 0.04em; }
     .analysis-text { font-size: 14px; line-height: 1.8; color: #c9d1d9; white-space: pre-line; }
 
@@ -222,6 +193,10 @@
 
     .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); font-size: 14px; }
     .error-msg { color: var(--red); font-size: 14px; padding: 0.5rem 0; display: flex; align-items: center; gap: 6px;}
+
+    /* skeleton loader */
+    .skeleton { background: linear-gradient(90deg, var(--bg-card2) 25%, #2a3340 50%, var(--bg-card2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius); height: 220px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
   </style>
 </head>
 <body>
@@ -242,13 +217,18 @@
   </div>
 
   <div class="tabs" id="tabs">
-    <button class="tab active" onclick="filterMatches('today')">Hoje — 12/06</button>
-    <button class="tab" onclick="filterMatches('tomorrow')">Amanhã — 13/06</button>
-    <button class="tab" onclick="filterMatches('past')">Ontem — 11/06</button>
-    <button class="tab" onclick="filterMatches('all')">Todos os Jogos</button>
+    <button class="tab active" onclick="filterMatches('today')" id="tab-today">Carregando...</button>
+    <button class="tab" onclick="filterMatches('tomorrow')" id="tab-tomorrow">Amanhã</button>
+    <button class="tab" onclick="filterMatches('past')" id="tab-past">Ontem</button>
+    <button class="tab" onclick="filterMatches('future')" id="tab-future">Próximos</button>
+    <button class="tab" onclick="filterMatches('all')" id="tab-all">Todos os Jogos</button>
   </div>
 
-  <div class="matches-grid" id="matchesGrid"></div>
+  <div class="matches-grid" id="matchesGrid">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </div>
 
   <div class="analysis-panel" id="analysisPanel" style="display:none;">
     <div class="panel-header">
@@ -264,7 +244,7 @@
         </div>
         <span>Cruzando xG, mapas de calor e dados logísticos de deslocamento...</span>
       </div>
-      
+
       <div class="bet-grid" id="betGrid" style="display:none;"></div>
 
       <div class="premium-insight" id="premiumInsight" style="display:none;">
@@ -287,40 +267,62 @@
 </main>
 
 <script>
-const matches = [
-  { id: 7, date: '11/06', day: 'past',     time: '16h (Brasília)', team1: 'México',        flag1: '🇲🇽', team2: 'África do Sul', flag2: '🇿🇦', group: 'Grupo A', venue: 'Cidade do México', result: '2-1' },
-  { id: 8, date: '11/06', day: 'past',     time: '23h (Brasília)', team1: 'Coreia do Sul', flag1: '🇰🇷', team2: 'Rep. Tcheca',    flag2: '🇨🇿', group: 'Grupo B', venue: 'Guadalajara',      result: '1-1' },
-  { id: 1, date: '12/06', day: 'today',    time: '16h (Brasília)', team1: 'Canadá',        flag1: '🇨🇦', team2: 'Itália',         flag2: '🇮🇹', group: 'Grupo C', venue: 'Toronto',           result: null },
-  { id: 2, date: '12/06', day: 'today',    time: '22h (Brasília)', team1: 'EUA',            flag1: '🇺🇸', team2: 'Paraguai',       flag2: '🇵🇾', group: 'Grupo D', venue: 'Los Angeles',       result: null },
-  { id: 3, date: '13/06', day: 'tomorrow', time: '01h (Brasília)', team1: 'Austrália',     flag1: '🇦🇺', team2: 'Turquia',        flag2: '🇹🇷', group: 'Grupo E', venue: 'Vancouver',         result: null },
-  { id: 4, date: '13/06', day: 'tomorrow', time: '16h (Brasília)', team1: 'Qatar',         flag1: '🇶🇦', team2: 'Suíça',          flag2: '🇨🇭', group: 'Grupo F', venue: 'San Francisco',     result: null },
-  { id: 5, date: '13/06', day: 'tomorrow', time: '19h (Brasília)', team1: 'Brasil',        flag1: '🇧🇷', team2: 'Marrocos',       flag2: '🇲🇦', group: 'Grupo C', venue: 'Nova York/NJ',     result: null },
-  { id: 6, date: '13/06', day: 'tomorrow', time: '22h (Brasília)', team1: 'Haiti',         flag1: '🇲🇹', team2: 'Escócia',        flag2: '🏴\u200D🏴󠁢󠁳󠁢󠁣󠁴󠁿', group: 'Grupo C', venue: 'Boston',            result: null },
-];
-
+let matches = [];
 let currentFilter = 'today';
 let selectedId = null;
 
+// Formata data de hoje e amanhã para os botões
+function fmtTabDate(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+document.getElementById('tab-today').textContent    = `Hoje — ${fmtTabDate(0)}`;
+document.getElementById('tab-tomorrow').textContent = `Amanhã — ${fmtTabDate(1)}`;
+document.getElementById('tab-past').textContent     = `Ontem — ${fmtTabDate(-1)}`;
+
+// Carrega jogos da função Netlify
+async function loadMatches() {
+  try {
+    const res = await fetch('/.netlify/functions/matches');
+    const data = await res.json();
+    if (data.matches && data.matches.length) {
+      matches = data.matches;
+    } else {
+      throw new Error('Sem partidas');
+    }
+  } catch (e) {
+    document.getElementById('matchesGrid').innerHTML =
+      '<div class="empty-state"><i class="ti ti-wifi-off" style="font-size:36px;display:block;margin-bottom:10px;color:var(--red);"></i>Não foi possível carregar os jogos. Tente recarregar a página.</div>';
+    return;
+  }
+  renderMatches();
+}
+
 function filterMatches(f) {
   currentFilter = f;
-  const tabKeys = ['today', 'tomorrow', 'past', 'all'];
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', tabKeys[i] === f);
+  ['today','tomorrow','past','future','all'].forEach(k => {
+    document.getElementById('tab-' + k)?.classList.toggle('active', k === f);
   });
   renderMatches();
 }
 
 function renderMatches() {
   const grid = document.getElementById('matchesGrid');
-  const list = currentFilter === 'all' ? matches : matches.filter(m => m.day === currentFilter);
+  const list = currentFilter === 'all'
+    ? matches
+    : matches.filter(m => m.day === currentFilter);
+
   if (!list.length) {
-    grid.innerHTML = '<div class="empty-state"><i class="ti ti-calendar-off" style="font-size:36px;display:block;margin-bottom:10px;color:var(--text-dim);"></i>Não há partidas agendadas para este filtro.</div>';
+    grid.innerHTML = '<div class="empty-state"><i class="ti ti-calendar-off" style="font-size:36px;display:block;margin-bottom:10px;color:var(--text-dim);"></i>Não há partidas para este filtro.</div>';
     return;
   }
+
   grid.innerHTML = list.map(m => `
     <div class="match-card ${m.day === 'past' ? 'past' : ''} ${selectedId === m.id ? 'selected' : ''}" id="card-${m.id}" onclick="selectCard(${m.id})">
       <div class="match-top">
-        <span class="match-round">Fase de Grupos</span>
+        <span class="match-round">${m.group}</span>
         <span class="match-time"><i class="ti ti-clock" style="font-size:11px; vertical-align:middle;"></i> ${m.date} · ${m.time}</span>
       </div>
       <div class="match-teams">
@@ -329,8 +331,8 @@ function renderMatches() {
           <span class="team-name">${m.team1}</span>
         </div>
         <div class="vs-box">
-          ${m.result 
-            ? `<span class="result-score">${m.result}</span>` 
+          ${m.result
+            ? `<span class="result-score">${m.result}</span>`
             : `<span class="vs">vs</span>`}
         </div>
         <div class="team">
@@ -340,7 +342,7 @@ function renderMatches() {
       </div>
       <div class="match-pills">
         <span class="pill pill-group">${m.group}</span>
-        <span class="pill pill-venue">📍 ${m.venue}</span>
+        ${m.venue ? `<span class="pill pill-venue">📍 ${m.venue}</span>` : ''}
       </div>
       <button class="btn-analyze" id="btn-${m.id}" onclick="event.stopPropagation(); analyzeMatch(${m.id})">
         <i class="ti ti-chart-bar" style="font-size:13px;"></i>
@@ -379,7 +381,7 @@ async function analyzeMatch(id) {
   textWrap.style.display = 'none';
   textEl.textContent = '';
   titleEl.innerHTML = `Análise Inteligente: ${match.flag1} vs ${match.flag2}`;
-  
+
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const btn = document.getElementById(`btn-${id}`);
@@ -409,7 +411,7 @@ async function analyzeMatch(id) {
       try {
         const clean = data.result.replace(/```json|```/g, '').trim();
         const p = JSON.parse(clean);
-        
+
         betGrid.style.display = 'grid';
         betGrid.innerHTML = `
           <div class="bet-card">
@@ -432,8 +434,8 @@ async function analyzeMatch(id) {
             <div class="bet-value">${p.mais_menos_2_5} de 2.5</div>
             <div class="bet-conf conf-${confClass(p.confianca_gols)}">🎚️ Confiança: ${p.confianca_gols}</div>
           </div>`;
-        
-        if(p.dica_ouro) {
+
+        if (p.dica_ouro) {
           premium.style.display = 'block';
           premiumTxt.innerHTML = `<strong>${p.dica_ouro.mercado}</strong> — ${p.dica_ouro.justificativa}`;
         }
@@ -460,7 +462,7 @@ function confClass(v) {
   return 'med';
 }
 
-renderMatches();
+loadMatches();
 </script>
 </body>
 </html>
