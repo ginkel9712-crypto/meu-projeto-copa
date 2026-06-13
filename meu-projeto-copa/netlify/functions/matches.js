@@ -46,7 +46,7 @@ const TEAMS = {
   'Egypt': { name: 'Egito', flag: '🇪🇬' },
   'Tunisia': { name: 'Tunísia', flag: '🇹🇳' },
   'Algeria': { name: 'Argélia', flag: '🇩🇿' },
-  "Ivory Coast": { name: 'Costa do Marfim', flag: '🇨🇮' },
+  'Ivory Coast': { name: 'Costa do Marfim', flag: '🇨🇮' },
   'Costa Rica': { name: 'Costa Rica', flag: '🇨🇷' },
   'Panama': { name: 'Panamá', flag: '🇵🇦' },
   'Jamaica': { name: 'Jamaica', flag: '🇯🇲' },
@@ -75,12 +75,13 @@ function resolveTeam(name) {
   return { name, flag: '🏳️' };
 }
 
+// Usa UTC-3 (Brasília) no servidor Netlify que roda em UTC
 function dayLabel(dateStr) {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const brasilia = new Date(Date.now() - 3 * 60 * 60 * 1000);
+  const todayMs = Date.UTC(brasilia.getUTCFullYear(), brasilia.getUTCMonth(), brasilia.getUTCDate());
   const [y, m, d] = dateStr.split('-').map(Number);
-  const matchDay = new Date(y, m - 1, d);
-  const diff = Math.round((matchDay - today) / 86400000);
+  const matchMs = Date.UTC(y, m - 1, d);
+  const diff = Math.round((matchMs - todayMs) / 86400000);
   if (diff === 0) return 'today';
   if (diff === 1) return 'tomorrow';
   if (diff === -1) return 'past';
@@ -93,19 +94,17 @@ function fmtDate(dateStr) {
   return `${d}/${m}`;
 }
 
-// Converte horário local do jogo (UTC-4 ou UTC-6) para Brasília (UTC-3)
+// Converte horário local do jogo para Brasília (UTC-3)
 function toBrasilia(timeStr) {
   if (!timeStr) return '? (Brasília)';
-  // extrai offset: "13:00 UTC-6" → offset = -6
   const offsetMatch = timeStr.match(/UTC([+-]\d+)/);
   const offset = offsetMatch ? parseInt(offsetMatch[1]) : -4;
   const timePart = timeStr.split(' ')[0];
   const [h, min] = timePart.split(':').map(Number);
-  // converte para UTC, depois para Brasília (UTC-3)
   let utcH = h - offset;
   let brasiliaH = utcH - 3;
   brasiliaH = ((brasiliaH % 24) + 24) % 24;
-  const minStr = min > 0 ? `:${String(min).padStart(2,'0')}` : '';
+  const minStr = min > 0 ? `:${String(min).padStart(2, '0')}` : '';
   return `${brasiliaH}h${minStr} (Brasília)`;
 }
 
@@ -130,8 +129,6 @@ exports.handler = async (event, context) => {
       res.on('end', () => {
         try {
           const raw = JSON.parse(body);
-
-          // estrutura correta: raw.matches é array plano
           const rawMatches = raw.matches || [];
           const matches = [];
           let id = 1;
@@ -141,14 +138,12 @@ exports.handler = async (event, context) => {
             const t2 = resolveTeam(m.team2 || '');
             const dateStr = m.date || '';
 
-            // resultado: score1/score2 se existir
             let result = null;
             if (m.score1 !== null && m.score1 !== undefined &&
                 m.score2 !== null && m.score2 !== undefined) {
               result = `${m.score1}-${m.score2}`;
             }
 
-            // grupo: "Group A" → "Grupo A"
             const group = m.group
               ? m.group.replace('Group', 'Grupo')
               : (m.round || 'Copa 2026');
